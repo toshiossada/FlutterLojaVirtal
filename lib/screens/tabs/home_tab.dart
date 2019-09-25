@@ -6,7 +6,7 @@ import 'package:transparent_image/transparent_image.dart';
 class HomeTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    Widget buildBodyBack() => Container(
+    Widget _buildBodyBack() => Container(
           decoration: BoxDecoration(
               gradient: LinearGradient(colors: [
             Color.fromARGB(255, 211, 118, 136),
@@ -16,7 +16,7 @@ class HomeTab extends StatelessWidget {
 
     return Stack(
       children: <Widget>[
-        buildBodyBack(),
+        _buildBodyBack(),
         CustomScrollView(
           slivers: <Widget>[
             SliverAppBar(
