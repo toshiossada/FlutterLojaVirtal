@@ -14,12 +14,12 @@ class ProductTile extends StatelessWidget {
       onTap: () => Navigator.of(context).push(
           MaterialPageRoute(builder: (context) => ProductScreen(_product))),
       child: Card(
-        child: (_type == 'grid') ? grid(context) : list(context),
+        child: (_type == 'grid') ? renderGridView(context) : renderListView(context),
       ),
     );
   }
 
-  Widget grid(BuildContext context) {
+  Widget renderGridView(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisAlignment: MainAxisAlignment.start,
@@ -38,7 +38,7 @@ class ProductTile extends StatelessWidget {
     );
   }
 
-  Widget list(BuildContext context) {
+  Widget renderListView(BuildContext context) {
     return Row(
       children: <Widget>[
         Flexible(
