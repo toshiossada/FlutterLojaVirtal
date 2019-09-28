@@ -27,8 +27,7 @@ class CategoryScreen extends StatelessWidget {
         body: FutureBuilder<QuerySnapshot>(
           future: Firestore.instance
               .collection("products")
-              //.document(_snapshot.documentID)
-              .document('camisetas')
+              .document(_snapshot.documentID)
               .collection("items")
               .getDocuments(),
           builder: (context, snapshot) {
