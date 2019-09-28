@@ -5,7 +5,7 @@ class Product {
   String id;
   String title;
   String description;
-  double price;
+  double price = 0;
   List images;
   List sizes;
 
@@ -13,7 +13,7 @@ class Product {
     id = snapshot.data['id'];
     title = snapshot.data['title'];
     description = snapshot.data['description'];
-    price = snapshot.data['price'] + 0.0;
+    price = snapshot.data['price'];
     images = snapshot.data['images'];
     sizes = snapshot.data['sizes'];
   }

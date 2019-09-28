@@ -7,6 +7,7 @@ class CategoryScreen extends StatelessWidget {
   final DocumentSnapshot _snapshot;
   CategoryScreen(this._snapshot);
 
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -26,7 +27,8 @@ class CategoryScreen extends StatelessWidget {
         body: FutureBuilder<QuerySnapshot>(
           future: Firestore.instance
               .collection("products")
-              .document(_snapshot.documentID)
+              //.document(_snapshot.documentID)
+              .document('camisetas')
               .collection("items")
               .getDocuments(),
           builder: (context, snapshot) {
