@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loja_virtual/screens/login_screen.dart';
 import 'package:loja_virtual/tiles/drawer_tile.dart';
 
 class CustomDrawer extends StatelessWidget {
@@ -50,7 +51,9 @@ class CustomDrawer extends StatelessWidget {
                                 fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                           GestureDetector(
-                            onTap: () {},
+                            onTap: () => Navigator.of(context).push(
+                                MaterialPageRoute(
+                                    builder: (context) => LoginScreen())),
                             child: Text(
                               'Entre ou cadastre-se >',
                               style: TextStyle(
@@ -69,7 +72,8 @@ class CustomDrawer extends StatelessWidget {
               DrawerTile(Icons.home, 'Inicio', _pageController, 0),
               DrawerTile(Icons.list, 'Produtos', _pageController, 1),
               DrawerTile(Icons.location_on, 'Lojas', _pageController, 2),
-              DrawerTile(Icons.playlist_add_check, 'Meus Pedidos', _pageController, 3),
+              DrawerTile(
+                  Icons.playlist_add_check, 'Meus Pedidos', _pageController, 3),
             ],
           )
         ],
