@@ -3,12 +3,22 @@ import 'package:loja_virtual/models/user_model.dart';
 import 'package:loja_virtual/screens/singup_screen.dart';
 import 'package:scoped_model/scoped_model.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  
+  final _emailController = TextEditingController();
+  final _passontroller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        key: _scaffoldKey,
         appBar: AppBar(
           title: Text("Entrar"),
           centerTitle: true,
@@ -52,6 +62,7 @@ class LoginScreen extends StatelessWidget {
     return Column(
       children: <Widget>[
         TextFormField(
+          controller: _emailController,
           decoration: InputDecoration(hintText: 'E-mail'),
           keyboardType: TextInputType.emailAddress,
           validator: (text) =>
@@ -63,6 +74,7 @@ class LoginScreen extends StatelessWidget {
           height: 16,
         ),
         TextFormField(
+          controller: _passontroller,
           decoration: InputDecoration(hintText: 'Senha'),
           obscureText: true,
           validator: (text) =>
@@ -99,7 +111,11 @@ class LoginScreen extends StatelessWidget {
         child: RaisedButton(
           onPressed: () {
             if (_formKey.currentState.validate()) {}
-            model.signIn();
+            model.signIn(
+                email: _emailController.text,
+                pass: _passontroller.text,
+                onFail: _onFail,
+                onSuccess: _onSuccess);
           },
           child: Text(
             'Entrar',
@@ -108,5 +124,18 @@ class LoginScreen extends StatelessWidget {
           textColor: Colors.white,
           color: Theme.of(context).primaryColor,
         ));
+  }
+
+  void _onSuccess() => Navigator.of(context).pop();
+
+
+  void _onFail() {
+        _scaffoldKey.currentState.showSnackBar(
+      SnackBar(
+        content: Text('Falha ao entrar!'),
+        backgroundColor: Colors.redAccent,
+        duration: Duration(seconds: 2),
+      )
+    );
   }
 }

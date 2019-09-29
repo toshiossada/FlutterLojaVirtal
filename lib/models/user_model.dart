@@ -14,11 +14,18 @@ class UserModel extends Model {
   FirebaseUser firebaseUser;
   Map<String, dynamic> userData = Map();
 
+  @override
+  void addListener(VoidCallback listener) {
+    super.addListener(listener);
+
+    _loadCurrentUser();
+  }
+
   void signUp(
       {@required Map<String, dynamic> userData,
       @required String pass,
       @required VoidCallback onSuccess,
-      @required VoidCallback onFail}) async{
+      @required VoidCallback onFail}) async {
     isLoading = true;
     notifyListeners();
     _auth
@@ -27,7 +34,7 @@ class UserModel extends Model {
         .then((result) async {
       firebaseUser = result.user;
       await _saveUserData(userData);
-
+      await _loadCurrentUser();
       onSuccess();
       isLoading = false;
       notifyListeners();
@@ -38,23 +45,65 @@ class UserModel extends Model {
     });
   }
 
-  void signIn() async {
+  void signIn(
+      {@required String email,
+      @required String pass,
+      @required VoidCallback onSuccess,
+      @required VoidCallback onFail}) async {
     isLoading = true;
     notifyListeners();
 
-    await Future.delayed(Duration(seconds: 3));
+    _auth
+        .signInWithEmailAndPassword(email: email, password: pass)
+        .then((user) async {
+      firebaseUser = user.user;
 
-    isLoading = false;
+      await _loadCurrentUser();
+      onSuccess();
+      isLoading = false;
+      notifyListeners();
+    }).catchError((e) {
+      onSuccess();
+      isLoading = false;
+      notifyListeners();
+    });
+  }
+
+  void signOut() async {
+    await _auth.signOut();
+    userData = Map();
+    firebaseUser = null;
+
     notifyListeners();
   }
 
   void recoverPass() {}
 
   bool isLoggedIn() {
-    return false;
+    return firebaseUser != null;
   }
 
-  Future<Null> _saveUserData(Map<String, dynamic> userData ) async {
-    await Firestore.instance.collection('users').document(firebaseUser.uid).setData(userData);
+  Future<Null> _saveUserData(Map<String, dynamic> userData) async {
+    await Firestore.instance
+        .collection('users')
+        .document(firebaseUser.uid)
+        .setData(userData);
+  }
+
+  Future<Null> _loadCurrentUser() async {
+    if (firebaseUser == null) {
+      firebaseUser = await _auth.currentUser();
+    }
+    if (firebaseUser != null) {
+      if (userData['name'] == null) {
+        var docUser = await Firestore.instance
+            .collection('users')
+            .document(firebaseUser.uid)
+            .get();
+        userData = docUser.data;
+      }
+    }
+
+    notifyListeners();
   }
 }
