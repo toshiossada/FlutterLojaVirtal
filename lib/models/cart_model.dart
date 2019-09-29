@@ -134,10 +134,13 @@ class CartModel extends Model {
     var query = await Firestore.instance
         .collection('users')
         .document(user.firebaseUser.uid)
-        .collection('cart')
+        .collection('cart') 
         .getDocuments();
 
-    query.documents.map<void>((d) => d.reference.delete());
+    for (var item in query.documents) {
+      item.reference.delete();
+    }
+    
     products.clear();
     discountPercent = 0;
     couponCode = null;

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:loja_virtual/models/cart_model.dart';
 import 'package:loja_virtual/models/user_model.dart';
-import 'package:loja_virtual/screens/login_screen.dart';
+import 'package:loja_virtual/screens/forbidden_screen.dart';
+import 'package:loja_virtual/screens/orders_screen.dart';
 import 'package:loja_virtual/tiles/cart_tile.dart';
 import 'package:loja_virtual/widgets/cart_price.dart';
 import 'package:loja_virtual/widgets/dicount_card.dart';
@@ -36,41 +37,7 @@ class CartScreen extends StatelessWidget {
           if (model.isLoading && UserModel.of(context).isLoggedIn()) {
             return Center(child: CircularProgressIndicator());
           } else if (!UserModel.of(context).isLoggedIn()) {
-            return Container(
-              padding: EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Icon(
-                    Icons.remove_shopping_cart,
-                    size: 80,
-                    color: Theme.of(context).primaryColor,
-                  ),
-                  SizedBox(
-                    height: 16,
-                  ),
-                  Text(
-                    'Faça o login para adicionar produtos!',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(
-                    height: 16,
-                  ),
-                  RaisedButton(
-                    child: Text(
-                      'Entrar',
-                      style: TextStyle(fontSize: 28),
-                    ),
-                    textColor: Colors.white,
-                    color: Theme.of(context).primaryColor,
-                    onPressed: () => Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => LoginScreen())),
-                  )
-                ],
-              ),
-            );
+            return ForbiddenScreen('Faça o login para adicionar produtos!', Icons.remove_shopping_cart);
           } else if (model.products == null || model.products.length == 0) {
             return Center(
               child: Text(
@@ -92,7 +59,9 @@ class CartScreen extends StatelessWidget {
                 CartPrice(() async {
                   var orderId = await model.finishOrder();
                   if(orderId != null){
-                    print(orderId);
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(builder: (context) => OrderScreen(orderId))
+                    );
                   }
                 })
               ],
