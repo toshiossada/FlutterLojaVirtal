@@ -1,6 +1,11 @@
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/material.dart';
+import 'package:loja_virtual/datas/cart_product.dart';
 import 'package:loja_virtual/datas/product.dart';
+import 'package:loja_virtual/models/cart_model.dart';
+import 'package:loja_virtual/models/user_model.dart';
+import 'package:loja_virtual/screens/cart_screen.dart';
+import 'package:loja_virtual/screens/login_screen.dart';
 
 class ProductScreen extends StatefulWidget {
   final Product _product;
@@ -48,7 +53,7 @@ class _ProductScreenState extends State<ProductScreen> {
                 buildPrices(primaryColor),
                 buildSizes(primaryColor),
                 buildBuyButtom(primaryColor),
-                buildDescription(primaryColor) 
+                buildDescription(primaryColor)
               ],
             ),
           )
@@ -130,9 +135,29 @@ class _ProductScreenState extends State<ProductScreen> {
         SizedBox(
           height: 44.0,
           child: RaisedButton(
-            onPressed: size != null ? () {} : null,
+            onPressed: size != null
+                ? () {
+                    if (UserModel.of(context).isLoggedIn()) {
+                      var cProduct = CartProduct();
+                      cProduct.size = size;
+                      cProduct.quantity = 1;
+                      cProduct.pid = product.id;
+                      cProduct.category = product.category;
+
+                      CartModel.of(context).addCartItem(cProduct);
+
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => CartScreen()));
+                    } else {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => LoginScreen()));
+                    }
+                  }
+                : null,
             child: Text(
-              "Adicionar ao Carrinho",
+              UserModel.of(context).isLoggedIn()
+                  ? 'Adicionar ao Carrinho'
+                  : 'Entre para comprar',
               style: TextStyle(fontSize: 18.0),
             ),
             color: primaryColor,
@@ -157,9 +182,7 @@ class _ProductScreenState extends State<ProductScreen> {
           ),
           Text(
             product.description,
-            style: TextStyle(
-              fontSize: 16
-            ),
+            style: TextStyle(fontSize: 16),
           )
         ]);
   }
