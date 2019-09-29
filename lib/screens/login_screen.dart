@@ -11,7 +11,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  
+
   final _emailController = TextEditingController();
   final _passontroller = TextEditingController();
 
@@ -49,7 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   padding: EdgeInsets.all(16),
                   children: <Widget>[
                     buildInputsForm(),
-                    buildForgetPassButtom(),
+                    buildForgetPassButtom(model),
                     buildEnterButtom(context, model)
                   ],
                 ),
@@ -84,13 +84,28 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget buildForgetPassButtom() {
+  Widget buildForgetPassButtom(UserModel model) {
     return Column(
       children: <Widget>[
         Align(
           alignment: Alignment.centerRight,
           child: FlatButton(
-            onPressed: () {},
+            onPressed: () {
+              if (_emailController.text.isEmpty)
+                _scaffoldKey.currentState.showSnackBar(SnackBar(
+                  content: Text('Insira seu E-mail para recuperação!'),
+                  backgroundColor: Colors.redAccent,
+                  duration: Duration(seconds: 2),
+                ));
+              else {
+                model.recoverPass(_emailController.text);
+                _scaffoldKey.currentState.showSnackBar(SnackBar(
+                  content: Text('Confira seu email!'),
+                  backgroundColor: Theme.of(context).primaryColor,
+                  duration: Duration(seconds: 2),
+                ));
+              }
+            },
             child: Text(
               'Esqueci minha senha',
               textAlign: TextAlign.right,
@@ -128,14 +143,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _onSuccess() => Navigator.of(context).pop();
 
-
   void _onFail() {
-        _scaffoldKey.currentState.showSnackBar(
-      SnackBar(
-        content: Text('Falha ao entrar!'),
-        backgroundColor: Colors.redAccent,
-        duration: Duration(seconds: 2),
-      )
-    );
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text('Falha ao entrar!'),
+      backgroundColor: Colors.redAccent,
+      duration: Duration(seconds: 2),
+    ));
   }
 }
