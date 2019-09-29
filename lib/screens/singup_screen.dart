@@ -1,26 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:loja_virtual/models/user_model.dart';
+import 'package:scoped_model/scoped_model.dart';
 
-class SignUpScreen extends StatelessWidget {
+class SignUpScreen extends StatefulWidget {
+  @override
+  _SignUpScreenState createState() => _SignUpScreenState();
+}
+
+class _SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
+
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passontroller = TextEditingController();
+  final _addressController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Criar Conta"),
-        centerTitle: true,
-      ),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: EdgeInsets.all(16),
-          children: <Widget>[
-            buildInputsForm(),
-            buildEnterButtom(context)
-          ],
+        appBar: AppBar(
+          title: Text("Criar Conta"),
+          centerTitle: true,
         ),
-      ),
-    );
+        body:
+            ScopedModelDescendant<UserModel>(builder: (context, child, model) {
+          if (model.isLoading)
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          else
+            return Form(
+              key: _formKey,
+              child: ListView(
+                padding: EdgeInsets.all(16),
+                children: <Widget>[
+                  buildInputsForm(),
+                  buildEnterButtom(context, model)
+                ],
+              ),
+            );
+        }));
   }
 
   Widget buildInputsForm() {
@@ -29,6 +48,7 @@ class SignUpScreen extends StatelessWidget {
         TextFormField(
           decoration: InputDecoration(hintText: 'Nome Completo'),
           validator: (text) => (text.isEmpty) ? 'Nome inválido' : null,
+          controller: _nameController,
         ),
         SizedBox(
           height: 16,
@@ -40,6 +60,7 @@ class SignUpScreen extends StatelessWidget {
               (text.isEmpty || !text.contains('@') || !text.contains('.'))
                   ? 'E-mail inválido'
                   : null,
+          controller: _emailController,
         ),
         SizedBox(
           height: 16,
@@ -49,14 +70,15 @@ class SignUpScreen extends StatelessWidget {
           obscureText: true,
           validator: (text) =>
               (text.isEmpty || text.length < 6) ? 'Senha inválida' : null,
+          controller: _passontroller,
         ),
         SizedBox(
           height: 16,
         ),
         TextFormField(
           decoration: InputDecoration(hintText: 'Endereço'),
-          validator: (text) =>
-              (text.isEmpty) ? 'Endereço inválida' : null,
+          validator: (text) => (text.isEmpty) ? 'Endereço inválida' : null,
+          controller: _addressController,
         ),
         SizedBox(
           height: 16,
@@ -65,12 +87,24 @@ class SignUpScreen extends StatelessWidget {
     );
   }
 
-  Widget buildEnterButtom(BuildContext context) {
+  Widget buildEnterButtom(BuildContext context, UserModel model) {
     return SizedBox(
         height: 44,
         child: RaisedButton(
           onPressed: () {
-            if (_formKey.currentState.validate()) {}
+            if (_formKey.currentState.validate()) {
+              var userData = {
+                'name': _nameController.text,
+                'email': _emailController.text,
+                'address': _addressController.text
+              };
+
+              model.signUp(
+                  userData: userData,
+                  pass: _passontroller.text,
+                  onFail: _onFail,
+                  onSuccess: _onSuccess);
+            }
           },
           child: Text(
             'Criar Conta',
@@ -80,4 +114,7 @@ class SignUpScreen extends StatelessWidget {
           color: Theme.of(context).primaryColor,
         ));
   }
+
+  void _onSuccess() {}
+  void _onFail() {}
 }
