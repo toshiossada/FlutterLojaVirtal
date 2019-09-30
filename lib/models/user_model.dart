@@ -63,7 +63,7 @@ class UserModel extends Model {
       isLoading = false;
       notifyListeners();
     }).catchError((e) {
-      onSuccess();
+      onFail();
       isLoading = false;
       notifyListeners();
     });
