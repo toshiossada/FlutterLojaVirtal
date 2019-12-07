@@ -41,7 +41,7 @@ class OrderTile extends StatelessWidget {
                   SizedBox(height: 4,),
                   Text(
                     'Status do Pedido:',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(fontWeight: FontWeight.bold), 
                   ),
                   SizedBox(height: 4,),
                   Row(
